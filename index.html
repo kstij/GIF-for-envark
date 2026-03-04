@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Envark — Component Library</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #e04a1a;
+  --orange-glow: rgba(224,74,26,0.5);
+  --bg: #0a0a09;
+  --text: #c8c8c0;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#111; color:var(--text); font-family:'Share Tech Mono',monospace; padding:40px 20px; }
+
+.page-title { font-family:'VT323',monospace; font-size:48px; color:var(--orange); letter-spacing:6px; text-align:center; margin-bottom:8px; }
+.page-sub { text-align:center; font-size:11px; color:#444; letter-spacing:3px; margin-bottom:60px; }
+
+.section-label {
+  font-size:10px; letter-spacing:4px; color:#555; text-transform:uppercase;
+  border-left:2px solid var(--orange); padding-left:12px;
+  margin-bottom:24px; margin-top:60px;
+}
+
+.component-wrap {
+  border:1px solid #1a1a18;
+  background:#0a0a09;
+  margin-bottom:16px;
+  overflow:hidden;
+  position:relative;
+}
+.component-label {
+  position:absolute; top:0; right:0;
+  background:#111; border-left:1px solid #1a1a18; border-bottom:1px solid #1a1a18;
+  font-size:9px; letter-spacing:2px; color:#333; padding:4px 10px;
+  z-index:100;
+}
+
+/* ════════════════════════════════════════
+   1. BACKGROUND EFFECTS
+════════════════════════════════════════ */
+
+/* BG 1: Noise + grid */
+.bg-noise {
+  width:100%; height:300px; position:relative; overflow:hidden;
+}
+#noiseCanvas { position:absolute; inset:0; width:100%; height:100%; }
+
+/* BG 2: Radar sweep */
+.bg-radar {
+  width:100%; height:300px; position:relative; overflow:hidden; background:#070706;
+  display:flex; align-items:center; justify-content:center;
+}
+#radarCanvas { position:absolute; inset:0; width:100%; height:100%; }
+
+/* BG 3: Hex grid */
+.bg-hex {
+  width:100%; height:300px; position:relative; overflow:hidden; background:#080807;
+}
+#hexCanvas { position:absolute; inset:0; width:100%; height:100%; }
+
+/* BG 4: Circuit board */
+.bg-circuit {
+  width:100%; height:300px; position:relative; overflow:hidden; background:#060605;
+}
+#circuitCanvas { position:absolute; inset:0; width:100%; height:100%; }
+
+/* ════════════════════════════════════════
+   2. 3D ILLUSTRATIONS
+════════════════════════════════════════ */
+
+/* 3D 1: Rotating cube */
+.illus-cube {
+  width:100%; height:340px; display:flex; align-items:center; justify-content:center;
+  background:#080807;
+  perspective: 900px;
+}
+.cube3d {
+  width:160px; height:160px;
+  transform-style:preserve-3d;
+  animation: spinCube 10s linear infinite;
+  position:relative;
+}
+.f {
+  position:absolute; width:160px; height:160px;
+  border:1px solid rgba(224,74,26,0.5);
+  background:rgba(224,74,26,0.04);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'VT323',monospace; font-size:18px; color:rgba(224,74,26,0.6); letter-spacing:3px;
+}
+.f1{transform:translateZ(80px);}
+.f2{transform:rotateY(180deg) translateZ(80px);}
+.f3{transform:rotateY(-90deg) translateZ(80px);}
+.f4{transform:rotateY(90deg) translateZ(80px);}
+.f5{transform:rotateX(90deg) translateZ(80px);}
+.f6{transform:rotateX(-90deg) translateZ(80px);}
+
+/* 3D 2: Floating shield */
+.illus-shield {
+  width:100%; height:340px; display:flex; align-items:center; justify-content:center;
+  background:#080807; position:relative; overflow:hidden;
+}
+#shieldCanvas { position:absolute; inset:0; width:100%; height:100%; }
+.shield-svg {
+  position:relative; z-index:2;
+  animation: floatShield 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(224,74,26,0.5));
+}
+
+/* 3D 3: Isometric server rack */
+.illus-iso {
+  width:100%; height:340px; display:flex; align-items:center; justify-content:center;
+  background:#080807;
+}
+#isoCanvas { width:300px; height:300px; }
+
+/* 3D 4: DNA helix of env vars */
+.illus-helix {
+  width:100%; height:340px; display:flex; align-items:center; justify-content:center;
+  background:#080807; overflow:hidden;
+}
+#helixCanvas { position:absolute; width:100%; height:340px; }
+
+/* ════════════════════════════════════════
+   3. GLITCH TITLE VARIATIONS
+════════════════════════════════════════ */
+.glitch-wrap {
+  width:100%; padding:40px 20px;
+  display:flex; align-items:center; justify-content:center;
+  background:#080807;
+  overflow:hidden; position:relative;
+}
+
+/* Glitch 1: Classic RGB split */
+.glitch-classic {
+  font-family:'VT323',monospace; font-size:96px; color:var(--orange);
+  letter-spacing:8px; position:relative; line-height:1;
+  text-shadow: 0 0 40px var(--orange-glow);
+}
+.glitch-classic::before {
+  content:attr(data-text); position:absolute; top:0; left:0;
+  color:rgba(0,255,200,0.4); animation:glitchA 3s infinite;
+  clip-path:polygon(0 30%,100% 30%,100% 50%,0 50%);
+  letter-spacing:8px;
+}
+.glitch-classic::after {
+  content:attr(data-text); position:absolute; top:0; left:0;
+  color:rgba(255,0,100,0.3); animation:glitchB 3s infinite;
+  clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%);
+  letter-spacing:8px;
+}
+
+/* Glitch 2: Scramble */
+.glitch-scramble {
+  font-family:'VT323',monospace; font-size:96px; color:var(--orange);
+  letter-spacing:8px; cursor:default; line-height:1;
+  text-shadow: 0 0 40px var(--orange-glow);
+}
+
+/* Glitch 3: Stacked shadow */
+.glitch-stacked {
+  font-family:'VT323',monospace; font-size:96px; letter-spacing:8px;
+  color:transparent; line-height:1;
+  -webkit-text-stroke:1px var(--orange);
+  text-shadow:
+    4px 4px 0 rgba(224,74,26,0.4),
+    8px 8px 0 rgba(224,74,26,0.2),
+    12px 12px 0 rgba(224,74,26,0.1);
+  animation: stackPulse 4s ease infinite;
+}
+
+/* Glitch 4: Scan lines through text */
+.glitch-scan {
+  font-family:'VT323',monospace; font-size:96px; color:var(--orange);
+  letter-spacing:8px; position:relative; line-height:1;
+  text-shadow: 0 0 60px var(--orange-glow);
+}
+.glitch-scan::after {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(0,0,0,0.3) 4px,rgba(0,0,0,0.3) 5px);
+  pointer-events:none;
+}
+
+/* Glitch 5: Pixel displace */
+.glitch-pixel {
+  font-family:'VT323',monospace; font-size:96px; color:var(--orange);
+  letter-spacing:8px; line-height:1;
+  animation: pixelGlitch 6s steps(1) infinite;
+  text-shadow: 0 0 30px var(--orange-glow);
+}
+
+/* ════════════════════════════════════════
+   4. PAGE BREAKERS
+════════════════════════════════════════ */
+.breaker {
+  width:100%; position:relative; overflow:hidden;
+}
+
+.breaker-1 {
+  height:80px; background:#0a0a09;
+  display:flex; align-items:center; justify-content:center; gap:16px;
+}
+.breaker-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(224,74,26,0.4),transparent); }
+.breaker-text { font-size:10px; letter-spacing:6px; color:var(--orange); white-space:nowrap; }
+
+.breaker-2 {
+  height:120px; background:#0a0a09; position:relative;
+}
+#breakerCanvas2 { position:absolute; inset:0; width:100%; height:100%; }
+
+.breaker-3 {
+  height:100px; background:#0a0a09;
+  display:flex; align-items:center; justify-content:center;
+  gap:8px;
+}
+.b3-item {
+  width:3px; background:var(--orange); opacity:0.3;
+  animation: barPulse 1.5s ease-in-out infinite;
+}
+
+.breaker-4 {
+  height:80px; background:#0a0a09; overflow:hidden;
+  display:flex; align-items:center;
+}
+.breaker-ticker {
+  display:flex; gap:40px; white-space:nowrap;
+  animation: tickerScroll 12s linear infinite;
+  font-size:11px; letter-spacing:3px; color:rgba(224,74,26,0.3);
+}
+.breaker-ticker span { color:rgba(224,74,26,0.6); }
+
+/* ════════════════════════════════════════
+   5. UI ELEMENTS
+════════════════════════════════════════ */
+
+/* Stats counter */
+.stats-row {
+  width:100%; padding:40px; background:#080807;
+  display:flex; justify-content:center; gap:0;
+}
+.stat-item {
+  padding:20px 40px; border-right:1px solid rgba(224,74,26,0.15);
+  text-align:center;
+}
+.stat-item:last-child { border-right:none; }
+.stat-num {
+  font-family:'VT323',monospace; font-size:56px; color:var(--orange);
+  line-height:1; display:block;
+  text-shadow: 0 0 20px var(--orange-glow);
+}
+.stat-lbl { font-size:9px; letter-spacing:3px; color:#444; text-transform:uppercase; margin-top:4px; }
+
+/* Risk badge set */
+.badges-row {
+  width:100%; padding:40px; background:#080807;
+  display:flex; flex-wrap:wrap; gap:12px; justify-content:center;
+}
+.risk-badge {
+  padding:8px 20px; font-size:11px; letter-spacing:3px;
+  border:1px solid; display:flex; align-items:center; gap:8px;
+}
+.risk-badge.critical { border-color:#e04a1a; color:#e04a1a; background:rgba(224,74,26,0.06); }
+.risk-badge.high     { border-color:#e07a1a; color:#e07a1a; background:rgba(224,122,26,0.06); }
+.risk-badge.medium   { border-color:#c8a020; color:#c8a020; background:rgba(200,160,32,0.06); }
+.risk-badge.low      { border-color:#4a8a5a; color:#4a8a5a; background:rgba(74,138,90,0.06); }
+.risk-badge.ok       { border-color:#2a6a4a; color:#2a6a4a; background:rgba(42,106,74,0.06); }
+.badge-dot { width:6px; height:6px; border-radius:50%; background:currentColor; animation:pulse 2s infinite; }
+
+/* Terminal mini */
+.term-mini {
+  width:100%; background:#080807; padding:40px;
+}
+.term-mini-inner {
+  max-width:600px; margin:0 auto;
+  border:1px solid rgba(224,74,26,0.2); overflow:hidden;
+}
+.term-mini-bar {
+  background:#0f0f0d; padding:8px 14px; border-bottom:1px solid rgba(224,74,26,0.1);
+  display:flex; align-items:center; gap:6px;
+}
+.tm-dot { width:8px; height:8px; border-radius:50%; }
+.tm-dot.r{background:#e04a1a;} .tm-dot.y{background:#555;} .tm-dot.g{background:#333;}
+.term-mini-body { padding:16px; font-size:12px; line-height:2; }
+.tm-prompt{color:var(--orange);} .tm-out{color:#555;padding-left:14px;}
+.tm-success{color:#4a9a6a;padding-left:14px;} .tm-warn{color:#e04a1a;padding-left:14px;}
+.tm-cursor{display:inline-block;width:7px;height:13px;background:var(--orange);animation:blink 1s step-end infinite;vertical-align:middle;}
+
+/* Floating env pills */
+.env-pills {
+  width:100%; height:200px; background:#080807; position:relative; overflow:hidden;
+}
+.env-pill {
+  position:absolute; border:1px solid rgba(224,74,26,0.25);
+  padding:6px 14px; font-size:10px; letter-spacing:2px;
+  animation: pillFloat var(--d) ease-in-out infinite;
+  animation-delay: var(--dl);
+  white-space:nowrap;
+}
+.env-pill .pkey { color:var(--orange); }
+.env-pill .pval { color:#555; }
+
+/* ════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════ */
+@keyframes spinCube {
+  0%{transform:rotateX(15deg) rotateY(0deg);}
+  100%{transform:rotateX(15deg) rotateY(360deg);}
+}
+@keyframes floatShield {
+  0%,100%{transform:translateY(0px) rotateY(0deg);}
+  50%{transform:translateY(-12px) rotateY(8deg);}
+}
+@keyframes glitchA {
+  0%,89%,100%{transform:translate(0);opacity:0;}
+  90%{transform:translate(-5px,1px);opacity:1;}
+  92%{transform:translate(5px,-1px);opacity:1;}
+  94%{transform:translate(-2px,0);opacity:1;}
+  96%{transform:translate(0);opacity:0;}
+}
+@keyframes glitchB {
+  0%,84%,100%{transform:translate(0);opacity:0;}
+  85%{transform:translate(6px,2px);opacity:1;}
+  87%{transform:translate(-4px,-1px);opacity:1;}
+  89%{transform:translate(0);opacity:0;}
+}
+@keyframes stackPulse {
+  0%,100%{text-shadow:4px 4px 0 rgba(224,74,26,0.4),8px 8px 0 rgba(224,74,26,0.2),12px 12px 0 rgba(224,74,26,0.1);}
+  50%{text-shadow:6px 6px 0 rgba(224,74,26,0.5),12px 12px 0 rgba(224,74,26,0.3),18px 18px 0 rgba(224,74,26,0.15);}
+}
+@keyframes pixelGlitch {
+  0%,90%,100%{transform:translate(0);}
+  91%{transform:translate(-3px,0);clip-path:polygon(0 0,100% 0,100% 45%,0 45%);}
+  92%{transform:translate(3px,0);clip-path:polygon(0 45%,100% 45%,100% 100%,0 100%);}
+  93%{transform:translate(-1px,2px);}
+  94%{transform:translate(0);}
+}
+@keyframes barPulse {
+  0%,100%{transform:scaleY(0.3);opacity:0.3;}
+  50%{transform:scaleY(1);opacity:0.8;}
+}
+@keyframes tickerScroll {
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+@keyframes pillFloat {
+  0%,100%{transform:translateY(0px);}
+  50%{transform:translateY(-10px);}
+}
+@keyframes pulse {0%,100%{opacity:1;}50%{opacity:0.3;}}
+@keyframes blink {0%,100%{opacity:1;}50%{opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="page-title">ENVARK</div>
+<div class="page-sub">COMPONENT LIBRARY · PICK & PLACE</div>
+
+<!-- ════════════════════════════════════════
+     BACKGROUND EFFECTS
+════════════════════════════════════════ -->
+<div class="section-label">01 · BACKGROUND EFFECTS</div>
+
+<div class="component-wrap">
+  <div class="component-label">BG-01 · NOISE GRID</div>
+  <div class="bg-noise"><canvas id="noiseCanvas"></canvas></div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">BG-02 · RADAR SWEEP</div>
+  <div class="bg-radar"><canvas id="radarCanvas"></canvas></div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">BG-03 · HEX GRID</div>
+  <div class="bg-hex"><canvas id="hexCanvas"></canvas></div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">BG-04 · CIRCUIT LINES</div>
+  <div class="bg-circuit"><canvas id="circuitCanvas"></canvas></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     3D ILLUSTRATIONS
+════════════════════════════════════════ -->
+<div class="section-label">02 · 3D ILLUSTRATIONS</div>
+
+<div class="component-wrap">
+  <div class="component-label">3D-01 · ROTATING CUBE</div>
+  <div class="illus-cube">
+    <div class="cube3d">
+      <div class="f f1">SCAN</div><div class="f f2">GUARD</div>
+      <div class="f f3">RISK</div><div class="f f4">MAP</div>
+      <div class="f f5">ENV</div><div class="f f6">ARK</div>
+    </div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">3D-02 · FLOATING SHIELD</div>
+  <div class="illus-shield">
+    <canvas id="shieldBg" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+    <svg class="shield-svg" width="140" height="160" viewBox="0 0 140 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M70 4L8 28V76C8 108 35 136 70 152C105 136 132 108 132 76V28L70 4Z" stroke="#e04a1a" stroke-width="1.5" fill="rgba(224,74,26,0.06)"/>
+      <path d="M70 16L20 36V76C20 102 42 124 70 138C98 124 120 102 120 76V36L70 16Z" stroke="rgba(224,74,26,0.4)" stroke-width="1" fill="rgba(224,74,26,0.03)"/>
+      <text x="70" y="82" text-anchor="middle" font-family="VT323,monospace" font-size="22" fill="#e04a1a" letter-spacing="3">ENV</text>
+      <text x="70" y="104" text-anchor="middle" font-family="VT323,monospace" font-size="22" fill="rgba(224,74,26,0.5)" letter-spacing="3">GUARD</text>
+      <!-- tick marks -->
+      <line x1="40" y1="56" x2="50" y2="68" stroke="rgba(224,74,26,0.5)" stroke-width="2"/>
+      <line x1="50" y1="68" x2="70" y2="48" stroke="rgba(224,74,26,0.5)" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">3D-03 · ISOMETRIC SERVER</div>
+  <div class="illus-iso">
+    <canvas id="isoCanvas" width="300" height="300"></canvas>
+  </div>
+</div>
+
+<div class="component-wrap" style="position:relative;">
+  <div class="component-label">3D-04 · ENV VAR HELIX</div>
+  <div class="illus-helix">
+    <canvas id="helixCanvas"></canvas>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     GLITCH TITLE VARIATIONS
+════════════════════════════════════════ -->
+<div class="section-label">03 · GLITCH TITLE VARIATIONS</div>
+
+<div class="component-wrap">
+  <div class="component-label">GLITCH-01 · RGB SPLIT</div>
+  <div class="glitch-wrap">
+    <div class="glitch-classic" data-text="ENVARK">ENVARK</div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">GLITCH-02 · CHAR SCRAMBLE (hover)</div>
+  <div class="glitch-wrap">
+    <div class="glitch-scramble" id="scrambleText">ENVARK</div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">GLITCH-03 · STACKED SHADOW</div>
+  <div class="glitch-wrap" style="background:#060605;">
+    <div class="glitch-stacked">ENVARK</div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">GLITCH-04 · SCANLINE CUT</div>
+  <div class="glitch-wrap">
+    <div class="glitch-scan">ENVARK</div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">GLITCH-05 · PIXEL DISPLACE</div>
+  <div class="glitch-wrap">
+    <div class="glitch-pixel">ENVARK</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE BREAKERS
+════════════════════════════════════════ -->
+<div class="section-label">04 · PAGE BREAKERS</div>
+
+<div class="component-wrap">
+  <div class="component-label">BREAK-01 · LINE + TEXT</div>
+  <div class="breaker breaker-1">
+    <div class="breaker-line"></div>
+    <div class="breaker-text">· ENVIRONMENT GUARDIAN ·</div>
+    <div class="breaker-line"></div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">BREAK-02 · WAVEFORM</div>
+  <div class="breaker breaker-2">
+    <canvas id="breakerCanvas2"></canvas>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">BREAK-03 · AUDIO BARS</div>
+  <div class="breaker breaker-3" id="audioBars"></div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">BREAK-04 · SCROLLING TICKER</div>
+  <div class="breaker breaker-4">
+    <div class="breaker-ticker" id="ticker">
+      <span>ENVARK</span>&nbsp;·&nbsp;API_KEY&nbsp;·&nbsp;DB_URL&nbsp;·&nbsp;JWT_SECRET&nbsp;·&nbsp;<span>MCP SERVER</span>&nbsp;·&nbsp;ENV GUARDIAN&nbsp;·&nbsp;NODE_ENV&nbsp;·&nbsp;SMTP_PASS&nbsp;·&nbsp;<span>ENVARK</span>&nbsp;·&nbsp;API_KEY&nbsp;·&nbsp;DB_URL&nbsp;·&nbsp;JWT_SECRET&nbsp;·&nbsp;<span>MCP SERVER</span>&nbsp;·&nbsp;ENV GUARDIAN&nbsp;·&nbsp;NODE_ENV&nbsp;·&nbsp;SMTP_PASS&nbsp;·&nbsp;
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     UI ELEMENTS
+════════════════════════════════════════ -->
+<div class="section-label">05 · UI ELEMENTS</div>
+
+<div class="component-wrap">
+  <div class="component-label">UI-01 · STATS COUNTER</div>
+  <div class="stats-row">
+    <div class="stat-item"><span class="stat-num" data-target="9">0</span><div class="stat-lbl">MCP Tools</div></div>
+    <div class="stat-item"><span class="stat-num" data-target="6">0</span><div class="stat-lbl">Languages</div></div>
+    <div class="stat-item"><span class="stat-num" data-target="134">0</span><div class="stat-lbl">Total Files</div></div>
+    <div class="stat-item"><span class="stat-num" data-target="84">0</span><div class="stat-lbl">Downloads</div></div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">UI-02 · RISK BADGES</div>
+  <div class="badges-row">
+    <div class="risk-badge critical"><div class="badge-dot"></div>CRITICAL</div>
+    <div class="risk-badge high"><div class="badge-dot"></div>HIGH RISK</div>
+    <div class="risk-badge medium"><div class="badge-dot"></div>MEDIUM</div>
+    <div class="risk-badge low"><div class="badge-dot"></div>LOW RISK</div>
+    <div class="risk-badge ok"><div class="badge-dot"></div>SECURE</div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">UI-03 · TERMINAL MINI</div>
+  <div class="term-mini">
+    <div class="term-mini-inner">
+      <div class="term-mini-bar">
+        <div class="tm-dot r"></div><div class="tm-dot y"></div><div class="tm-dot g"></div>
+      </div>
+      <div class="term-mini-body" id="miniTerm"></div>
+    </div>
+  </div>
+</div>
+
+<div class="component-wrap">
+  <div class="component-label">UI-04 · FLOATING ENV PILLS</div>
+  <div class="env-pills" id="envPills"></div>
+</div>
+
+<script>
+// ══════════════════════════════
+// BG-01: NOISE GRID
+// ══════════════════════════════
+const nc = document.getElementById('noiseCanvas');
+nc.width = nc.parentElement.offsetWidth;
+nc.height = nc.parentElement.offsetHeight;
+const nCtx = nc.getContext('2d');
+let noiseT = 0;
+
+function drawNoise() {
+  nCtx.clearRect(0,0,nc.width,nc.height);
+  const sz = 40;
+  // grid
+  nCtx.strokeStyle='rgba(224,74,26,0.05)'; nCtx.lineWidth=1;
+  for(let x=0;x<nc.width;x+=sz){nCtx.beginPath();nCtx.moveTo(x,0);nCtx.lineTo(x,nc.height);nCtx.stroke();}
+  for(let y=0;y<nc.height;y+=sz){nCtx.beginPath();nCtx.moveTo(0,y);nCtx.lineTo(nc.width,y);nCtx.stroke();}
+  // noise dots at intersections
+  noiseT+=0.02;
+  for(let x=0;x<nc.width;x+=sz){
+    for(let y=0;y<nc.height;y+=sz){
+      const n = Math.sin(x*0.05+noiseT)*Math.cos(y*0.05+noiseT*0.7);
+      const alpha = Math.max(0,(n+1)*0.06);
+      if(alpha>0.01){
+        nCtx.beginPath();
+        nCtx.arc(x,y,2,0,Math.PI*2);
+        nCtx.fillStyle=`rgba(224,74,26,${alpha})`;
+        nCtx.fill();
+      }
+    }
+  }
+  // radial vignette
+  const grad = nCtx.createRadialGradient(nc.width/2,nc.height/2,nc.height*0.2,nc.width/2,nc.height/2,nc.height*0.8);
+  grad.addColorStop(0,'transparent');
+  grad.addColorStop(1,'rgba(8,8,7,0.7)');
+  nCtx.fillStyle=grad; nCtx.fillRect(0,0,nc.width,nc.height);
+}
+
+// ══════════════════════════════
+// BG-02: RADAR
+// ══════════════════════════════
+const rc = document.getElementById('radarCanvas');
+rc.width = rc.parentElement.offsetWidth;
+rc.height = rc.parentElement.offsetHeight;
+const rCtx = rc.getContext('2d');
+let radarAngle = 0;
+const radarBlips = Array.from({length:6},()=>({
+  r: 20+Math.random()*120, a: Math.random()*Math.PI*2, life:0
+}));
+
+function drawRadar() {
+  rCtx.clearRect(0,0,rc.width,rc.height);
+  const cx=rc.width/2, cy=rc.height/2, maxR=Math.min(cx,cy)-10;
+  // rings
+  for(let i=1;i<=4;i++){
+    rCtx.beginPath(); rCtx.arc(cx,cy,maxR*(i/4),0,Math.PI*2);
+    rCtx.strokeStyle=`rgba(224,74,26,0.1)`; rCtx.lineWidth=1; rCtx.stroke();
+  }
+  // crosshairs
+  rCtx.strokeStyle='rgba(224,74,26,0.08)';
+  rCtx.beginPath();rCtx.moveTo(cx-maxR,cy);rCtx.lineTo(cx+maxR,cy);rCtx.stroke();
+  rCtx.beginPath();rCtx.moveTo(cx,cy-maxR);rCtx.lineTo(cx,cy+maxR);rCtx.stroke();
+  // sweep gradient
+  rCtx.save();
+  rCtx.translate(cx,cy);
+  rCtx.rotate(radarAngle);
+  const sweep = rCtx.createConicalGradient ? null : null;
+  for(let a=0;a<Math.PI/2;a+=0.05){
+    const alpha = (1-a/(Math.PI/2))*0.15;
+    rCtx.beginPath();
+    rCtx.moveTo(0,0);
+    rCtx.arc(0,0,maxR,-a,0);
+    rCtx.closePath();
+    rCtx.fillStyle=`rgba(224,74,26,${alpha})`;
+    rCtx.fill();
+  }
+  // sweep line
+  rCtx.beginPath(); rCtx.moveTo(0,0); rCtx.lineTo(maxR,0);
+  rCtx.strokeStyle='rgba(224,74,26,0.8)'; rCtx.lineWidth=2; rCtx.stroke();
+  rCtx.restore();
+  radarAngle += 0.02;
+  // blips
+  radarBlips.forEach(b=>{
+    const da = ((radarAngle - b.a) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
+    if(da<0.2) b.life=1;
+    if(b.life>0){
+      const bx=cx+Math.cos(b.a)*b.r*(maxR/140), by=cy+Math.sin(b.a)*b.r*(maxR/140);
+      rCtx.beginPath(); rCtx.arc(bx,by,3,0,Math.PI*2);
+      rCtx.fillStyle=`rgba(224,74,26,${b.life})`;
+      rCtx.fill();
+      b.life=Math.max(0,b.life-0.008);
+    }
+  });
+  // center dot
+  rCtx.beginPath(); rCtx.arc(cx,cy,3,0,Math.PI*2);
+  rCtx.fillStyle='rgba(224,74,26,0.8)'; rCtx.fill();
+}
+
+// ══════════════════════════════
+// BG-03: HEX GRID
+// ══════════════════════════════
+const hxc = document.getElementById('hexCanvas');
+hxc.width = hxc.parentElement.offsetWidth;
+hxc.height = hxc.parentElement.offsetHeight;
+const hxCtx = hxc.getContext('2d');
+let hexT=0;
+const hexes=[];
+const HR=28;
+for(let row=0;row<Math.ceil(hxc.height/(HR*1.5))+1;row++){
+  for(let col=0;col<Math.ceil(hxc.width/(HR*1.732))+1;col++){
+    hexes.push({
+      x:col*HR*1.732+(row%2)*HR*0.866,
+      y:row*HR*1.5,
+      phase:Math.random()*Math.PI*2
+    });
+  }
+}
+function hexPath(ctx,x,y,r){
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a=Math.PI/180*(60*i-30);
+    i===0?ctx.moveTo(x+r*Math.cos(a),y+r*Math.sin(a)):ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));
+  }
+  ctx.closePath();
+}
+function drawHex(){
+  hxCtx.clearRect(0,0,hxc.width,hxc.height);
+  hexT+=0.01;
+  hexes.forEach(h=>{
+    const v=(Math.sin(hexT+h.phase)+1)/2;
+    const alpha=v*0.08;
+    hexPath(hxCtx,h.x,h.y,HR-2);
+    hxCtx.strokeStyle=`rgba(224,74,26,${alpha+0.03})`;
+    hxCtx.lineWidth=1; hxCtx.stroke();
+    if(v>0.85){
+      hxCtx.fillStyle=`rgba(224,74,26,0.04)`;
+      hxCtx.fill();
+    }
+  });
+}
+
+// ══════════════════════════════
+// BG-04: CIRCUIT
+// ══════════════════════════════
+const cc = document.getElementById('circuitCanvas');
+cc.width = cc.parentElement.offsetWidth;
+cc.height = cc.parentElement.offsetHeight;
+const cCtx = cc.getContext('2d');
+const circuits=[];
+for(let i=0;i<20;i++){
+  const pts=[{x:Math.random()*cc.width,y:Math.random()*cc.height}];
+  let px=pts[0].x, py=pts[0].y;
+  for(let j=0;j<5+Math.floor(Math.random()*4);j++){
+    const dir=Math.floor(Math.random()*4);
+    const len=20+Math.floor(Math.random()*80);
+    if(dir===0)px+=len; else if(dir===1)px-=len;
+    else if(dir===2)py+=len; else py-=len;
+    pts.push({x:px,y:py});
+  }
+  circuits.push({pts,progress:0,speed:0.003+Math.random()*0.004,alpha:0.08+Math.random()*0.15});
+}
+function drawCircuit(){
+  cCtx.clearRect(0,0,cc.width,cc.height);
+  circuits.forEach(c=>{
+    c.progress=(c.progress+c.speed)%1;
+    const totalLen=c.pts.reduce((acc,p,i)=>{
+      if(i===0)return 0;
+      return acc+Math.hypot(p.x-c.pts[i-1].x,p.y-c.pts[i-1].y);
+    },0);
+    let drawn=0;
+    cCtx.strokeStyle=`rgba(224,74,26,${c.alpha})`;
+    cCtx.lineWidth=1;
+    c.pts.forEach((p,i)=>{
+      if(i===0)return;
+      const seg=Math.hypot(p.x-c.pts[i-1].x,p.y-c.pts[i-1].y);
+      cCtx.beginPath(); cCtx.moveTo(c.pts[i-1].x,c.pts[i-1].y); cCtx.lineTo(p.x,p.y); cCtx.stroke();
+      drawn+=seg;
+      // node dot
+      cCtx.beginPath(); cCtx.arc(p.x,p.y,2,0,Math.PI*2);
+      cCtx.fillStyle=`rgba(224,74,26,${c.alpha*1.5})`; cCtx.fill();
+    });
+    // pulse dot
+    let dTarget=c.progress*totalLen, d2=0;
+    for(let i=1;i<c.pts.length;i++){
+      const seg=Math.hypot(c.pts[i].x-c.pts[i-1].x,c.pts[i].y-c.pts[i-1].y);
+      if(d2+seg>=dTarget){
+        const t=(dTarget-d2)/seg;
+        const px2=c.pts[i-1].x+(c.pts[i].x-c.pts[i-1].x)*t;
+        const py2=c.pts[i-1].y+(c.pts[i].y-c.pts[i-1].y)*t;
+        cCtx.beginPath(); cCtx.arc(px2,py2,3,0,Math.PI*2);
+        cCtx.fillStyle='rgba(224,74,26,0.9)'; cCtx.fill();
+        break;
+      }
+      d2+=seg;
+    }
+  });
+}
+
+// ══════════════════════════════
+// 3D-02: SHIELD BG
+// ══════════════════════════════
+const sb=document.getElementById('shieldBg');
+sb.width=sb.parentElement.offsetWidth; sb.height=sb.parentElement.offsetHeight;
+const sbCtx=sb.getContext('2d');
+let shieldT=0;
+function drawShieldBg(){
+  sbCtx.clearRect(0,0,sb.width,sb.height);
+  shieldT+=0.02;
+  const cx=sb.width/2, cy=sb.height/2;
+  for(let r=20;r<Math.max(cx,cy);r+=30){
+    const alpha=0.03*Math.abs(Math.sin(shieldT+r*0.02));
+    sbCtx.beginPath(); sbCtx.arc(cx,cy,r,0,Math.PI*2);
+    sbCtx.strokeStyle=`rgba(224,74,26,${alpha})`; sbCtx.lineWidth=1; sbCtx.stroke();
+  }
+}
+
+// ══════════════════════════════
+// 3D-03: ISOMETRIC SERVER RACK
+// ══════════════════════════════
+const iso=document.getElementById('isoCanvas');
+const iCtx=iso.getContext('2d');
+let isoT=0;
+
+function isoProject(x,y,z){
+  return{
+    x:150+(x-z)*Math.cos(Math.PI/6)*28,
+    y:150+(x+z)*Math.sin(Math.PI/6)*28-y*28
+  };
+}
+
+function drawIsoBox(ctx,x,y,z,w,h,d,colors,blink){
+  const p1=isoProject(x,y,z);
+  const p2=isoProject(x+w,y,z);
+  const p3=isoProject(x+w,y,z+d);
+  const p4=isoProject(x,y,z+d);
+  const p5=isoProject(x,y+h,z);
+  const p6=isoProject(x+w,y+h,z);
+  const p7=isoProject(x+w,y+h,z+d);
+  const p8=isoProject(x,y+h,z+d);
+  // top
+  ctx.beginPath(); ctx.moveTo(p5.x,p5.y); ctx.lineTo(p6.x,p6.y); ctx.lineTo(p7.x,p7.y); ctx.lineTo(p8.x,p8.y); ctx.closePath();
+  ctx.fillStyle=colors[0]; ctx.fill(); ctx.strokeStyle='rgba(224,74,26,0.4)'; ctx.lineWidth=0.8; ctx.stroke();
+  // right
+  ctx.beginPath(); ctx.moveTo(p2.x,p2.y); ctx.lineTo(p3.x,p3.y); ctx.lineTo(p7.x,p7.y); ctx.lineTo(p6.x,p6.y); ctx.closePath();
+  ctx.fillStyle=colors[1]; ctx.fill(); ctx.stroke();
+  // front
+  ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.lineTo(p6.x,p6.y); ctx.lineTo(p5.x,p5.y); ctx.closePath();
+  ctx.fillStyle=colors[2]; ctx.fill(); ctx.stroke();
+  // blink dot
+  if(blink){
+    const dot=isoProject(x+0.2,y+h+0.1,z+0.1);
+    iCtx.beginPath(); iCtx.arc(dot.x,dot.y,2.5,0,Math.PI*2);
+    iCtx.fillStyle=`rgba(224,74,26,${0.5+0.5*Math.sin(isoT*3+x)})`; iCtx.fill();
+  }
+}
+
+function drawIso(){
+  iCtx.clearRect(0,0,300,300);
+  isoT+=0.03;
+  const base='rgba(18,18,16,';
+  // server rack units
+  for(let u=0;u<5;u++){
+    const active=Math.sin(isoT+u*1.2)>0.3;
+    drawIsoBox(iCtx,0,u*1.2,0,3,1,1.5,[
+      `rgba(20,20,18,0.9)`,
+      `rgba(15,15,13,0.9)`,
+      `rgba(25,25,22,0.9)`
+    ],true);
+  }
+  // base platform
+  drawIsoBox(iCtx,-0.3,-0.3,-0.2,3.6,0.3,1.9,[
+    `rgba(30,28,24,0.8)`,`rgba(20,18,14,0.8)`,`rgba(25,23,19,0.8)`
+  ],false);
+}
+
+// ══════════════════════════════
+// 3D-04: ENV VAR HELIX
+// ══════════════════════════════
+const hxCanvas=document.getElementById('helixCanvas');
+hxCanvas.width=hxCanvas.parentElement.offsetWidth;
+hxCanvas.height=340;
+const hhCtx=hxCanvas.getContext('2d');
+let helixT=0;
+const HVARS=['API_KEY','DB_URL','SECRET','JWT','PORT','NODE_ENV','REDIS','S3_KEY','TOKEN','SMTP'];
+
+function drawHelix(){
+  hhCtx.clearRect(0,0,hxCanvas.width,hxCanvas.height);
+  helixT+=0.015;
+  const cx=hxCanvas.width/2, cy=170;
+  const R=80, N=20;
+  for(let i=0;i<N;i++){
+    const t=i/N;
+    const angle=t*Math.PI*4+helixT;
+    const y=cy+(t-0.5)*280;
+    const x1=cx+Math.cos(angle)*R;
+    const x2=cx+Math.cos(angle+Math.PI)*R;
+    const z1=Math.sin(angle);
+    const z2=Math.sin(angle+Math.PI);
+    // strand connection
+    if(i<N-1){
+      const t2=(i+1)/N, a2=t2*Math.PI*4+helixT;
+      const y2=cy+(t2-0.5)*280;
+      hhCtx.beginPath();
+      hhCtx.moveTo(cx+Math.cos(angle)*R, y);
+      hhCtx.lineTo(cx+Math.cos(a2)*R, y2);
+      hhCtx.strokeStyle=`rgba(224,74,26,0.15)`; hhCtx.lineWidth=1; hhCtx.stroke();
+      hhCtx.beginPath();
+      hhCtx.moveTo(cx+Math.cos(angle+Math.PI)*R, y);
+      hhCtx.lineTo(cx+Math.cos(a2+Math.PI)*R, y2);
+      hhCtx.strokeStyle=`rgba(224,74,26,0.15)`; hhCtx.lineWidth=1; hhCtx.stroke();
+    }
+    // rung
+    hhCtx.beginPath(); hhCtx.moveTo(x1,y); hhCtx.lineTo(x2,y);
+    const rAlpha=0.04+0.06*Math.abs(z1);
+    hhCtx.strokeStyle=`rgba(224,74,26,${rAlpha})`; hhCtx.lineWidth=1; hhCtx.stroke();
+    // nodes
+    const r1=2+Math.abs(z1)*2;
+    hhCtx.beginPath(); hhCtx.arc(x1,y,r1,0,Math.PI*2);
+    hhCtx.fillStyle=`rgba(224,74,26,${0.3+0.5*Math.abs(z1)})`; hhCtx.fill();
+    const r2=2+Math.abs(z2)*2;
+    hhCtx.beginPath(); hhCtx.arc(x2,y,r2,0,Math.PI*2);
+    hhCtx.fillStyle=`rgba(224,74,26,${0.3+0.5*Math.abs(z2)})`; hhCtx.fill();
+    // var labels on front nodes
+    if(z1>0.3){
+      hhCtx.font=`${9+Math.abs(z1)*2}px 'Share Tech Mono',monospace`;
+      hhCtx.fillStyle=`rgba(224,74,26,${z1*0.8})`;
+      hhCtx.fillText(HVARS[i%HVARS.length],x1+6,y+4);
+    }
+  }
+}
+
+// ══════════════════════════════
+// BREAKER-02: WAVEFORM
+// ══════════════════════════════
+const bwc=document.getElementById('breakerCanvas2');
+bwc.width=bwc.parentElement.offsetWidth; bwc.height=120;
+const bwCtx=bwc.getContext('2d');
+let bwT=0;
+function drawBreaker(){
+  bwCtx.clearRect(0,0,bwc.width,bwc.height);
+  bwT+=0.04;
+  const cy=60;
+  bwCtx.beginPath();
+  for(let x=0;x<bwc.width;x++){
+    const t=x/bwc.width;
+    const y=cy+Math.sin(t*Math.PI*8+bwT)*12*Math.sin(t*Math.PI)+
+             Math.sin(t*Math.PI*16+bwT*1.3)*5*Math.cos(t*Math.PI*2);
+    x===0?bwCtx.moveTo(x,y):bwCtx.lineTo(x,y);
+  }
+  bwCtx.strokeStyle='rgba(224,74,26,0.5)'; bwCtx.lineWidth=1.5; bwCtx.stroke();
+  // glow layer
+  bwCtx.beginPath();
+  for(let x=0;x<bwc.width;x++){
+    const t=x/bwc.width;
+    const y=cy+Math.sin(t*Math.PI*8+bwT)*12*Math.sin(t*Math.PI)+
+             Math.sin(t*Math.PI*16+bwT*1.3)*5*Math.cos(t*Math.PI*2);
+    x===0?bwCtx.moveTo(x,y):bwCtx.lineTo(x,y);
+  }
+  bwCtx.strokeStyle='rgba(224,74,26,0.15)'; bwCtx.lineWidth=6; bwCtx.stroke();
+  // center line
+  bwCtx.beginPath(); bwCtx.moveTo(0,cy); bwCtx.lineTo(bwc.width,cy);
+  bwCtx.strokeStyle='rgba(224,74,26,0.06)'; bwCtx.lineWidth=1; bwCtx.stroke();
+}
+
+// ══════════════════════════════
+// BREAKER-03: AUDIO BARS
+// ══════════════════════════════
+const abContainer=document.getElementById('audioBars');
+const BAR_COUNT=40;
+for(let i=0;i<BAR_COUNT;i++){
+  const b=document.createElement('div');
+  b.className='b3-item';
+  const h=20+Math.floor(Math.random()*60);
+  b.style.height=h+'px';
+  b.style.animationDelay=(i*0.06)+'s';
+  b.style.animationDuration=(1+Math.random()*1)+'s';
+  abContainer.appendChild(b);
+}
+
+// ══════════════════════════════
+// CHAR SCRAMBLE
+// ══════════════════════════════
+const CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%&';
+const scrambleEl=document.getElementById('scrambleText');
+const original='ENVARK';
+let scrambleInterval;
+scrambleEl.parentElement.addEventListener('mouseenter',()=>{
+  let iter=0;
+  clearInterval(scrambleInterval);
+  scrambleInterval=setInterval(()=>{
+    scrambleEl.textContent=original.split('').map((c,i)=>{
+      if(i<iter) return original[i];
+      return CHARS[Math.floor(Math.random()*CHARS.length)];
+    }).join('');
+    if(iter>=original.length) clearInterval(scrambleInterval);
+    iter+=0.4;
+  },40);
+});
+
+// ══════════════════════════════
+// STATS COUNTER ANIMATION
+// ══════════════════════════════
+document.querySelectorAll('[data-target]').forEach(el=>{
+  const target=+el.dataset.target;
+  let current=0;
+  const step=target/60;
+  const interval=setInterval(()=>{
+    current=Math.min(current+step,target);
+    el.textContent=Math.floor(current);
+    if(current>=target) clearInterval(interval);
+  },20);
+});
+
+// ══════════════════════════════
+// MINI TERMINAL
+// ══════════════════════════════
+const mtLines=[
+  {t:'cmd',v:'npx envark .'},
+  {t:'out',v:'→ Found 47 env variables'},
+  {t:'warn',v:'⚠ 2 CRITICAL · 3 HIGH · 6 UNDOCUMENTED'},
+  {t:'success',v:'✓ Report complete'},
+];
+const mt=document.getElementById('miniTerm');
+let mIdx=0;
+function addMTLine(){
+  if(mIdx>=mtLines.length){setTimeout(()=>{mt.innerHTML='';mIdx=0;addMTLine();},2000);return;}
+  const l=mtLines[mIdx];
+  const el=document.createElement('div');
+  el.style.opacity='0';
+  if(l.t==='cmd') el.innerHTML=`<span class="tm-prompt">$ </span><span>${l.v}</span>`;
+  else if(l.t==='success') el.innerHTML=`<span class="tm-success">${l.v}</span>`;
+  else if(l.t==='warn') el.innerHTML=`<span class="tm-warn">${l.v}</span>`;
+  else el.innerHTML=`<span class="tm-out">${l.v}</span>`;
+  mt.appendChild(el);
+  setTimeout(()=>el.style.cssText='opacity:1;transition:opacity 0.3s',10);
+  mIdx++;
+  setTimeout(addMTLine,l.t==='cmd'?500:200);
+}
+addMTLine();
+
+// ══════════════════════════════
+// FLOATING ENV PILLS
+// ══════════════════════════════
+const pillData=[
+  {k:'API_KEY',v:'undefined',s:'critical',l:'8%',t:'20%'},
+  {k:'DB_URL',v:'postgres://...',s:'ok',l:'30%',t:'55%'},
+  {k:'JWT_SECRET',v:'missing',s:'critical',l:'55%',t:'15%'},
+  {k:'PORT',v:'3000',s:'ok',l:'70%',t:'60%'},
+  {k:'NODE_ENV',v:'production',s:'ok',l:'15%',t:'70%'},
+  {k:'SMTP_PASS',v:'exposed?',s:'warn',l:'82%',t:'35%'},
+];
+const pillColors={critical:'rgba(224,74,26,0.25)',ok:'rgba(42,106,74,0.2)',warn:'rgba(224,122,26,0.2)'};
+const pillContainer=document.getElementById('envPills');
+pillData.forEach((p,i)=>{
+  const el=document.createElement('div');
+  el.className='env-pill';
+  el.style.left=p.l; el.style.top=p.t;
+  el.style.borderColor=p.s==='critical'?'rgba(224,74,26,0.3)':p.s==='warn'?'rgba(224,122,26,0.3)':'rgba(42,106,74,0.3)';
+  el.style.setProperty('--d',(3+i*0.5)+'s');
+  el.style.setProperty('--dl',(i*0.4)+'s');
+  el.innerHTML=`<span class="pkey">${p.k}</span><span class="pval">=${p.v}</span>`;
+  pillContainer.appendChild(el);
+});
+
+// ══════════════════════════════
+// MAIN LOOP
+// ══════════════════════════════
+function loop(){
+  drawNoise(); drawRadar(); drawHex(); drawCircuit();
+  drawShieldBg(); drawIso(); drawHelix(); drawBreaker();
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
